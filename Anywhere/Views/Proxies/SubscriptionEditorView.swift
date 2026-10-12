@@ -18,9 +18,11 @@ struct SubscriptionEditorView: View {
     @State private var configurationIds: [UUID] = []
 
     private var configurations: [ProxyConfiguration] {
-        configurationIds.compactMap { id in
-            configurationStore.configurations.first { $0.id == id }
-        }
+        let byId = Dictionary(
+            configurationStore.configurations.map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        return configurationIds.compactMap { byId[$0] }
     }
 
     private var canSave: Bool {
